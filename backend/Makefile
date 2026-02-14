@@ -1,4 +1,4 @@
-.PHONY: install db dev test clean help
+.PHONY: install db seed dev test test-checkout clean help
 
 PYTHON := python3
 PIP := $(PYTHON) -m pip
@@ -8,13 +8,15 @@ PYTEST := pytest
 help:
 	@echo "Greeting Card POS Backend - Available Commands"
 	@echo "================================================"
-	@echo "install    - Install dependencies"
-	@echo "db         - Initialize database with sample data"
-	@echo "dev        - Run development server"
-	@echo "test       - Run tests"
-	@echo "clean      - Clean temporary files and databases"
-	@echo "lint       - Run code linting (if black/flake8 installed)"
-	@echo "help       - Show this help message"
+	@echo "install       - Install dependencies"
+	@echo "db            - Initialize database"
+	@echo "seed          - Seed database with sample products"
+	@echo "dev           - Run development server"
+	@echo "test          - Run tests"
+	@echo "test-checkout - Test checkout flow end-to-end"
+	@echo "clean         - Clean temporary files and databases"
+	@echo "lint          - Run code linting (if black/flake8 installed)"
+	@echo "help          - Show this help message"
 
 install:
 	@echo "Installing dependencies..."
@@ -25,6 +27,15 @@ db:
 	@echo "Initializing database..."
 	$(PYTHON) init_db.py
 	@echo "Database initialized!"
+
+seed:
+	@echo "Seeding database with sample products..."
+	$(PYTHON) seed_products.py
+	@echo "Database seeded!"
+
+test-checkout:
+	@echo "Testing checkout flow..."
+	$(PYTHON) test_checkout.py
 
 dev:
 	@echo "Starting development server..."

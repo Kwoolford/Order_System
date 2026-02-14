@@ -10,7 +10,7 @@ import logging
 from app.config import settings
 from app.database import init_db
 from app.schemas import HealthCheck
-from app.routes import auth
+from app.routes import auth, products, orders, cart, config, users
 
 # Configure logging
 logging.basicConfig(
@@ -108,6 +108,11 @@ async def root():
 
 # Include routers
 app.include_router(auth.router)
+app.include_router(users.router)
+app.include_router(products.router)
+app.include_router(orders.router)
+app.include_router(cart.router)
+app.include_router(config.router)
 
 
 # Shutdown event
