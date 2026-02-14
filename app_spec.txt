@@ -1,0 +1,215 @@
+Greeting Card Shop: Inventory + POS POC
+
+OVERVIEW
+Build a production-quality Inventory Management + Point-of-Sale (POS) web app for a small retail greeting card shop.
+This is a POC demo intended to impress stakeholders. Prioritize user experience, reliability, and completeness.
+No external paid services required. Payments are simulated.
+
+PRIMARY USERS & ROLES
+1) Cashier
+- Runs the in-store POS (quick search, cart, checkout, receipt).
+- Can create customers (optional), apply allowed discounts (as permitted), and process returns.
+2) Manager
+- Full inventory tools, stock adjustments, purchase orders, supplier management.
+- Can view reports, configure tax, payment settings, discount policies.
+3) Admin
+- User management, full audit logs, maintenance actions.
+
+Role-based access control must be enforced server-side.
+
+CORE FLOWS (WHAT THE APP MUST DO)
+
+A) POS CHECKOUT (core demo)
+- Fast product lookup by SKU, name, category, and barcode (simulate barcode entry via input).
+- Cart supports:
+  - quantity adjustments
+  - line-item discounts (manager-only) with a required reason
+  - cart-level discount codes (manager-only)
+  - tax calculation using configurable tax rate(s)
+  - configurable rounding rules
+- Checkout supports payment types:
+  - Cash
+  - Credit (simulated)
+  - Split payment (cash + credit)
+- On completion:
+  - generate a receipt view (print-friendly)
+  - store transaction permanently
+  - decrement inventory correctly and atomically
+
+B) INVENTORY MANAGEMENT
+- CRUD products with:
+  - SKU (unique), barcode (optional unique)
+  - title, description
+  - category (Birthday, Anniversary, Holiday, Sympathy, Blank, Humor, Kids, Thank You)
+  - brand/artist (optional)
+  - cost, price, margin auto-calc
+  - taxable flag
+  - reorder threshold + reorder quantity
+  - location (aisle/bin)
+  - status (active/discontinued)
+- Stock tracking:
+  - on-hand quantity
+  - reserved quantity (in carts/orders if implemented; otherwise document as future)
+  - stock adjustments with reasons: damage, theft, recount, vendor return, other
+- Suppliers & purchase orders:
+  - suppliers list (name, email, phone)
+  - create purchase order (items, quantities, expected date)
+  - receiving a PO increases stock and records cost
+- Low-stock dashboard:
+  - reorder-needed list driven by thresholds
+  - one-click PO draft creation from low-stock suggestions
+
+C) RETURNS & REFUNDS
+- Lookup orders by receipt/order number
+- Return line items partially or fully
+- Restock returned items (toggleable if damaged)
+- Refund method mirrors original payment (simulated)
+- Record a complete audit trail
+
+D) CUSTOMERS (optional but polished; include if feasible)
+- Create/search customers by name/email/phone
+- Attach customer to orders
+- Purchase history page
+
+E) REPORTING DASHBOARD (manager/admin)
+- Sales metrics:
+  - revenue (gross/net), tax collected
+  - top selling products
+  - sales by category
+  - sales by day/week
+- Inventory metrics:
+  - low-stock counts
+  - inventory valuation (cost basis)
+  - shrink (from adjustments)
+- Filters:
+  - date range picker
+  - category filter
+- Export:
+  - CSV export for orders and inventory
+
+NON-FUNCTIONAL REQUIREMENTS
+
+UX / UI
+- Must feel like a modern retail app.
+- Mobile-friendly, optimized for tablet/laptop in-store.
+- Consistent design system: sidebar navigation, top search in POS, fast keyboard-driven actions.
+- Clear typography, spacing, polished loading states, user-friendly error messages.
+
+PERFORMANCE
+- POS search should feel instant (debounced, optimized query).
+- Pages must load quickly on local dev.
+
+SECURITY & AUDITING
+- Authentication required (email+password OK for POC).
+- Role-based authorization enforced server-side.
+- Audit log records:
+  - inventory adjustments
+  - discount usage (who/why)
+  - returns
+  - PO receiving
+- Prevent negative inventory (except admin override with explicit reason).
+
+RELIABILITY
+- Validate inputs for all endpoints.
+- Checkout must be transactional: order creation + inventory decrement atomic.
+
+REQUIRED TECH STACK
+Backend:
+- Python FastAPI
+- SQLAlchemy models; SQLite for dev (structured to be compatible with Postgres)
+Frontend:
+- React + TypeScript (Vite)
+UI:
+- shadcn/ui (or equivalent) for a polished professional look
+Charts:
+- Recharts (or equivalent) for dashboards
+Testing:
+- Backend: pytest
+- Frontend: basic component tests
+- E2E: Playwright smoke test if feasible (login -> add to cart -> checkout -> receipt)
+Tooling:
+- Python lint/format (ruff + black)
+- Frontend lint/format (eslint + prettier)
+- Seed script to populate demo data
+
+MINIMUM DATA MODEL
+- User(id, email, hashed_password, role)
+- Product(id, sku, barcode, name, description, category, price, cost, taxable, reorder_threshold, reorder_qty, location, status)
+- InventoryMovement(id, product_id, type, delta_qty, reason, created_by, created_at)
+- Order(id, order_number, created_at, cashier_id, customer_id (nullable), subtotal, discount_total, tax_total, total, payment_json)
+- OrderItem(id, order_id, product_id, qty, unit_price, discount, line_total)
+- Supplier(id, name, email, phone)
+- PurchaseOrder(id, po_number, supplier_id, status, expected_date, created_at)
+- PurchaseOrderItem(id, purchase_order_id, product_id, qty, unit_cost)
+- AuditLog(id, actor_id, action, entity_type, entity_id, metadata_json, created_at)
+
+SEED DATA (DEMO-READY)
+Provide a seed dataset with:
+- 50-100 greeting card products with realistic names, categories, prices ($4.99-$9.99)
+- 5+ categories + 3 brands/artists
+- Random stock quantities with some items below reorder threshold
+- Users:
+  - 3 cashiers
+  - 1 manager
+  - 1 admin
+- 30-50 historical orders spread over last 30 days for dashboard charts
+- A few purchase orders (pending and received)
+Include demo credentials in README (for demo only).
+
+KEY SCREENS
+1) Login
+2) POS screen (search, cart, checkout)
+3) Receipt screen (print-friendly)
+4) Orders list + order detail
+5) Returns flow
+6) Products list + product create/edit
+7) Inventory dashboard + adjustments
+8) Suppliers + purchase orders + receiving screen
+9) Reports dashboard (charts + filters)
+10) Admin: users + audit log viewer
+
+POS KEYBOARD SHORTCUTS
+- / focuses product search
+- Enter adds highlighted item to cart
+- + / - adjusts quantity of selected cart item
+- Ctrl+Enter completes checkout (if ready)
+- Esc closes modals / clears overlays
+
+DEMO WOW FEATURES (MUST-HAVE)
+- Offline-ish feel: optimistic cart updates
+- Receipt: printable layout; include order QR code if feasible
+- Low-stock intelligence: suggestions to create PO drafts
+- Audit log viewer: filterable with clear metadata
+- Split payments: cash + credit simulation
+- Beautiful dashboard: real charts from seeded historical data
+
+DELIVERABLES
+- Working app runnable locally with one command
+- Clear README with setup, demo credentials, how to run backend/frontend, how to seed, how to run tests
+- Automated tests:
+  - backend unit tests for checkout + inventory adjustments
+  - at least one e2e smoke test if feasible
+- Clean commits and a PR if GitHub integration is enabled
+
+LOCAL RUN REQUIREMENTS
+Provide top-level scripts or make targets:
+- make setup (install deps)
+- make seed
+- make dev (runs backend + frontend)
+- make test
+
+Default ports:
+- API: 8000
+- Web: 5173 (or 3000); document in README
+
+CONSTRAINTS & GUARDRAILS
+- No real payment integration; simulate payments only.
+- No external paid services required.
+- Prefer pragmatic, complete POC over overengineering.
+- Keep data model consistent and migration-friendly.
+
+SUCCESS CRITERIA
+- Cashier can complete a sale in under 15 seconds in the demo flow.
+- Inventory updates correctly after sales, returns, and PO receiving.
+- Manager dashboard shows meaningful charts from seeded data.
+- App looks polished enough to demo to executives.
