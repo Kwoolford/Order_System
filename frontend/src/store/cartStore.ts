@@ -1,72 +1,80 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import type { CartState, Product } from '../types';
 
-const TAX_RATE = 0.08; // 8% tax rate
+const TAX_RATE = 0.085; // 8.5% tax rate
 
-export const useCartStore = create<CartState>((set, get) => ({
-  items: [],
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      items: [],
 
-  addItem: (product: Product, quantity: number = 1) => {
-    set((state) => {
-      const existingItem = state.items.find(
-        (item) => item.product.id === product.id
-      );
+      addItem: (product: Product, quantity: number = 1) => {
+        set((state) => {
+          const existingItem = state.items.find(
+            (item) => item.product.id === product.id
+          );
 
-      if (existingItem) {
-        return {
+          if (existingItem) {
+            return {
+              items: state.items.map((item) =>
+                item.product.id === product.id
+                  ? { ...item, quantity: item.quantity + quantity }
+                  : item
+              ),
+            };
+          }
+
+          return {
+            items: [...state.items, { product, quantity }],
+          };
+        });
+      },
+
+      removeItem: (productId: number) => {
+        set((state) => ({
+          items: state.items.filter((item) => item.product.id !== productId),
+        }));
+      },
+
+      updateQuantity: (productId: number, quantity: number) => {
+        if (quantity <= 0) {
+          get().removeItem(productId);
+          return;
+        }
+
+        set((state) => ({
           items: state.items.map((item) =>
-            item.product.id === product.id
-              ? { ...item, quantity: item.quantity + quantity }
-              : item
+            item.product.id === productId ? { ...item, quantity } : item
           ),
-        };
-      }
+        }));
+      },
 
-      return {
-        items: [...state.items, { product, quantity }],
-      };
-    });
-  },
+      clearCart: () => {
+        set({ items: [] });
+      },
 
-  removeItem: (productId: number) => {
-    set((state) => ({
-      items: state.items.filter((item) => item.product.id !== productId),
-    }));
-  },
+      getSubtotal: () => {
+        const state = get();
+        return state.items.reduce(
+          (total, item) => total + item.product.price * item.quantity,
+          0
+        );
+      },
 
-  updateQuantity: (productId: number, quantity: number) => {
-    if (quantity <= 0) {
-      get().removeItem(productId);
-      return;
+      getTax: () => {
+        const subtotal = get().getSubtotal();
+        return subtotal * TAX_RATE;
+      },
+
+      getTotal: () => {
+        const subtotal = get().getSubtotal();
+        const tax = get().getTax();
+        return subtotal + tax;
+      },
+    }),
+    {
+      name: 'pos-cart-storage',
     }
-
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
-      ),
-    }));
-  },
-
-  clearCart: () => {
-    set({ items: [] });
-  },
-
-  getSubtotal: () => {
-    const state = get();
-    return state.items.reduce(
-      (total, item) => total + item.product.price * item.quantity,
-      0
-    );
-  },
-
-  getTax: () => {
-    const subtotal = get().getSubtotal();
-    return subtotal * TAX_RATE;
-  },
-
-  getTotal: () => {
-    const subtotal = get().getSubtotal();
-    const tax = get().getTax();
-    return subtotal + tax;
-  },
-}));
+  )
+);

@@ -12,14 +12,18 @@ export interface Product {
   name: string;
   description?: string;
   sku: string;
+  barcode?: string;
   price: number;
   cost?: number;
-  stock_quantity: number;
+  stock_quantity: number; // Frontend alias for on_hand
+  on_hand: number; // Backend field
   category?: string;
-  image_url?: string;
-  is_active: boolean;
+  taxable: boolean;
+  status: string;
+  location?: string;
+  reorder_threshold?: number;
+  reorder_qty?: number;
   created_at: string;
-  updated_at: string;
 }
 
 export interface OrderItem {

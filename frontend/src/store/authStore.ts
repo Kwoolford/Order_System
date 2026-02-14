@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { AuthState, User } from '../types';
+import type { AuthState } from '../types';
 import apiClient from '../api/client';
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -9,26 +9,12 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   login: async (username: string, password: string) => {
     try {
-      const formData = new URLSearchParams();
-      formData.append('username', username);
-      formData.append('password', password);
-
-      const response = await apiClient.post('/api/auth/token', formData, {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+      const response = await apiClient.post('/auth/login', {
+        email: username,
+        password: password,
       });
 
-      const { access_token } = response.data;
-
-      // Get user info
-      const userResponse = await apiClient.get('/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
-
-      const user: User = userResponse.data;
+      const { access_token, user } = response.data;
 
       // Store in localStorage
       localStorage.setItem('token', access_token);
