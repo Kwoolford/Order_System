@@ -10,6 +10,7 @@ import SettingsPage from './pages/SettingsPage';
 import OrdersPage from './pages/OrdersPage';
 import OrderDetailPage from './pages/OrderDetailPage';
 import ReceiptPage from './pages/ReceiptPage';
+import ReturnsPage from './pages/ReturnsPage';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -114,6 +115,17 @@ function App() {
           element={
             <ProtectedRoute>
               <ReceiptPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/returns"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <ReturnsPage />
+              </MainLayout>
             </ProtectedRoute>
           }
         />

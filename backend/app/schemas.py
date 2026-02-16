@@ -187,6 +187,46 @@ class TaxConfigResponse(BaseModel):
     tax_rate_percent: float
 
 
+# Returns schemas
+class ReturnItemCreate(BaseModel):
+    """Return item creation schema"""
+    order_item_id: int
+    qty: int = Field(..., gt=0)
+    damaged: bool = Field(False, description="If true, item won't be restocked")
+
+
+class ReturnCreate(BaseModel):
+    """Return creation schema"""
+    order_id: int
+    items: List[ReturnItemCreate]
+    reason: Optional[str] = None
+
+
+class OrderLookupResponse(BaseModel):
+    """Order lookup response for returns"""
+    id: int
+    order_number: str
+    created_at: datetime
+    subtotal: float
+    discount_total: float
+    tax_total: float
+    total: float
+    payment_method: str
+    cashier_id: int
+    items: List[Dict[str, Any]]
+
+
+class ReturnResponse(BaseModel):
+    """Return processing response"""
+    order_id: int
+    order_number: str
+    refund_amount: float
+    refund_method: str
+    items_returned: List[Dict[str, Any]]
+    processed_at: datetime
+    processed_by: str
+
+
 # Health check schema
 class HealthCheck(BaseModel):
     """Health check response"""

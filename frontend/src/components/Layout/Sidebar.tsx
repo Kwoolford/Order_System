@@ -5,7 +5,8 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  ShoppingBag
+  ShoppingBag,
+  RotateCcw
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -16,6 +17,7 @@ const Sidebar = () => {
   const navigation = [
     { name: 'POS', href: '/pos', icon: ShoppingCart },
     { name: 'Orders', href: '/orders', icon: ShoppingBag },
+    { name: 'Returns', href: '/returns', icon: RotateCcw },
     { name: 'Inventory', href: '/inventory', icon: Package },
     { name: 'Dashboard', href: '/dashboard', icon: BarChart3 },
     { name: 'Settings', href: '/settings', icon: Settings },
