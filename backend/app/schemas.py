@@ -133,6 +133,7 @@ class OrderResponse(BaseModel):
     discount_total: float
     tax_total: float
     total: float
+    payment_json: Optional[str] = None
     items: List[OrderItemResponse] = []
 
     class Config:

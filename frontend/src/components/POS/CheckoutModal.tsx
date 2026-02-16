@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, CreditCard, DollarSign, Split } from 'lucide-react';
 import { useCartStore } from '../../store/cartStore';
 import { createOrder, validateCart } from '../../api/orders';
@@ -24,6 +24,21 @@ const CheckoutModal = ({ isOpen, onClose, onSuccess }: CheckoutModalProps) => {
   const tax = getTax();
   const total = getTotal();
   const discountTotal = getDiscountTotal();
+
+  // Keyboard shortcut: Ctrl+Enter to complete checkout
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'Enter' && !loading) {
+        e.preventDefault();
+        handleCheckout();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, loading, paymentMethod, cashAmount, creditAmount]);
 
   if (!isOpen) return null;
 
