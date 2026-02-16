@@ -8,6 +8,8 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      cartDiscount: 0,
+      cartDiscountCode: undefined,
 
       addItem: (product: Product, quantity: number = 1) => {
         set((state) => {
@@ -26,7 +28,7 @@ export const useCartStore = create<CartState>()(
           }
 
           return {
-            items: [...state.items, { product, quantity }],
+            items: [...state.items, { product, quantity, discount: 0 }],
           };
         });
       },
@@ -50,27 +52,56 @@ export const useCartStore = create<CartState>()(
         }));
       },
 
+      updateItemDiscount: (productId: number, discount: number, reason: string) => {
+        set((state) => ({
+          items: state.items.map((item) =>
+            item.product.id === productId
+              ? { ...item, discount, discountReason: reason }
+              : item
+          ),
+        }));
+      },
+
+      setCartDiscount: (discount: number, code?: string) => {
+        set({ cartDiscount: discount, cartDiscountCode: code });
+      },
+
       clearCart: () => {
-        set({ items: [] });
+        set({ items: [], cartDiscount: 0, cartDiscountCode: undefined });
       },
 
       getSubtotal: () => {
         const state = get();
         return state.items.reduce(
-          (total, item) => total + item.product.price * item.quantity,
+          (total, item) => {
+            const lineTotal = item.product.price * item.quantity;
+            const itemDiscount = item.discount || 0;
+            return total + lineTotal - itemDiscount;
+          },
           0
         );
       },
 
+      getDiscountTotal: () => {
+        const state = get();
+        const itemDiscounts = state.items.reduce(
+          (total, item) => total + (item.discount || 0),
+          0
+        );
+        return itemDiscounts + state.cartDiscount;
+      },
+
       getTax: () => {
         const subtotal = get().getSubtotal();
-        return subtotal * TAX_RATE;
+        const cartDiscount = get().cartDiscount;
+        return (subtotal - cartDiscount) * TAX_RATE;
       },
 
       getTotal: () => {
         const subtotal = get().getSubtotal();
+        const cartDiscount = get().cartDiscount;
         const tax = get().getTax();
-        return subtotal + tax;
+        return subtotal - cartDiscount + tax;
       },
     }),
     {

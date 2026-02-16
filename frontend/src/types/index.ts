@@ -1,10 +1,11 @@
 export interface User {
   id: number;
-  username: string;
+  username?: string;
   email: string;
   full_name?: string;
-  is_active: boolean;
-  is_superuser: boolean;
+  is_active?: boolean;
+  is_superuser?: boolean;
+  role: 'admin' | 'manager' | 'cashier';
 }
 
 export interface Product {
@@ -55,6 +56,8 @@ export interface Order {
 export interface CartItem {
   product: Product;
   quantity: number;
+  discount?: number;
+  discountReason?: string;
 }
 
 export interface AuthState {
@@ -67,11 +70,16 @@ export interface AuthState {
 
 export interface CartState {
   items: CartItem[];
+  cartDiscount: number;
+  cartDiscountCode?: string;
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: number) => void;
   updateQuantity: (productId: number, quantity: number) => void;
+  updateItemDiscount: (productId: number, discount: number, reason: string) => void;
+  setCartDiscount: (discount: number, code?: string) => void;
   clearCart: () => void;
   getTotal: () => number;
   getSubtotal: () => number;
   getTax: () => number;
+  getDiscountTotal: () => number;
 }

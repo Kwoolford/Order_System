@@ -13,7 +13,7 @@ interface CheckoutModalProps {
 type PaymentMethod = 'cash' | 'credit' | 'split';
 
 const CheckoutModal = ({ isOpen, onClose, onSuccess }: CheckoutModalProps) => {
-  const { items, getSubtotal, getTax, getTotal, clearCart } = useCartStore();
+  const { items, getSubtotal, getTax, getTotal, getDiscountTotal, clearCart } = useCartStore();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [cashAmount, setCashAmount] = useState('');
   const [creditAmount, setCreditAmount] = useState('');
@@ -23,6 +23,7 @@ const CheckoutModal = ({ isOpen, onClose, onSuccess }: CheckoutModalProps) => {
   const subtotal = getSubtotal();
   const tax = getTax();
   const total = getTotal();
+  const discountTotal = getDiscountTotal();
 
   if (!isOpen) return null;
 
@@ -58,10 +59,10 @@ const CheckoutModal = ({ isOpen, onClose, onSuccess }: CheckoutModalProps) => {
           product_id: item.product.id,
           qty: item.quantity,
           unit_price: item.product.price,
-          discount: 0,
+          discount: item.discount || 0,
         })),
         subtotal,
-        discount_total: 0,
+        discount_total: discountTotal,
         tax_total: tax,
         total,
         payment_details: {
@@ -188,6 +189,12 @@ const CheckoutModal = ({ isOpen, onClose, onSuccess }: CheckoutModalProps) => {
                 <span className="text-gray-600">Subtotal:</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
+              {discountTotal > 0 && (
+                <div className="flex justify-between text-sm text-green-600">
+                  <span>Discounts:</span>
+                  <span>-${discountTotal.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Tax (8.5%):</span>
                 <span>${tax.toFixed(2)}</span>
