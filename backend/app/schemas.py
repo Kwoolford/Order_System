@@ -65,6 +65,8 @@ class ProductCreate(ProductBase):
 
 class ProductUpdate(BaseModel):
     """Product update schema"""
+    sku: Optional[str] = None
+    barcode: Optional[str] = None
     name: Optional[str] = None
     description: Optional[str] = None
     category: Optional[str] = None
@@ -74,6 +76,7 @@ class ProductUpdate(BaseModel):
     reorder_threshold: Optional[int] = None
     reorder_qty: Optional[int] = None
     location: Optional[str] = None
+    status: Optional[str] = None
 
 
 class ProductResponse(ProductBase):
@@ -85,6 +88,11 @@ class ProductResponse(ProductBase):
 
     class Config:
         from_attributes = True
+
+    @property
+    def margin(self) -> float:
+        """Calculate profit margin"""
+        return self.price - self.cost
 
 
 # Order schemas

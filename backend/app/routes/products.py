@@ -13,6 +13,18 @@ from app.rbac import require_manager
 
 router = APIRouter(prefix="/products", tags=["products"])
 
+# Allowed product categories
+ALLOWED_CATEGORIES = [
+    "Birthday",
+    "Anniversary",
+    "Holiday",
+    "Sympathy",
+    "Blank",
+    "Humor",
+    "Kids",
+    "Thank You"
+]
+
 
 @router.get("", response_model=List[ProductResponse])
 def list_products(
@@ -129,8 +141,15 @@ def create_product(
         Created product
 
     Raises:
-        HTTPException: If SKU already exists
+        HTTPException: If SKU already exists or category is invalid
     """
+    # Validate category
+    if product_data.category and product_data.category not in ALLOWED_CATEGORIES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid category. Must be one of: {', '.join(ALLOWED_CATEGORIES)}"
+        )
+
     # Check if SKU already exists
     existing_product = db.query(Product).filter(Product.sku == product_data.sku).first()
     if existing_product:
@@ -177,6 +196,70 @@ def update_product(
         Updated product
 
     Raises:
+        HTTPException: If product not found or category is invalid
+    """
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Product not found"
+        )
+
+    # Validate category if being updated
+    update_data = product_data.model_dump(exclude_unset=True)
+    if "category" in update_data and update_data["category"] is not None:
+        if update_data["category"] not in ALLOWED_CATEGORIES:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid category. Must be one of: {', '.join(ALLOWED_CATEGORIES)}"
+            )
+
+    # Check SKU uniqueness if being updated
+    if "sku" in update_data and update_data["sku"] != product.sku:
+        existing_sku = db.query(Product).filter(Product.sku == update_data["sku"]).first()
+        if existing_sku:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="SKU already exists"
+            )
+
+    # Check barcode uniqueness if being updated
+    if "barcode" in update_data and update_data["barcode"] and update_data["barcode"] != product.barcode:
+        existing_barcode = db.query(Product).filter(Product.barcode == update_data["barcode"]).first()
+        if existing_barcode:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Barcode already exists"
+            )
+
+    # Update product fields
+    for field, value in update_data.items():
+        setattr(product, field, value)
+
+    db.commit()
+    db.refresh(product)
+
+    return product
+
+
+@router.delete("/{product_id}", response_model=ProductResponse)
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_manager)
+):
+    """
+    Soft delete a product by setting status to discontinued
+
+    Args:
+        product_id: Product ID
+        db: Database session
+        current_user: Current authenticated user
+
+    Returns:
+        Updated product with discontinued status
+
+    Raises:
         HTTPException: If product not found
     """
     product = db.query(Product).filter(Product.id == product_id).first()
@@ -186,11 +269,20 @@ def update_product(
             detail="Product not found"
         )
 
-    # Update product fields
-    for field, value in product_data.model_dump(exclude_unset=True).items():
-        setattr(product, field, value)
-
+    # Soft delete by setting status to discontinued
+    product.status = ProductStatus.DISCONTINUED
     db.commit()
     db.refresh(product)
 
     return product
+
+
+@router.get("/categories/list", response_model=List[str])
+def get_categories():
+    """
+    Get list of allowed product categories
+
+    Returns:
+        List of allowed category names
+    """
+    return ALLOWED_CATEGORIES
