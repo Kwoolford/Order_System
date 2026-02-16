@@ -7,6 +7,9 @@ import POSPage from './pages/POSPage';
 import InventoryPage from './pages/InventoryPage';
 import DashboardPage from './pages/DashboardPage';
 import SettingsPage from './pages/SettingsPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailPage from './pages/OrderDetailPage';
+import ReceiptPage from './pages/ReceiptPage';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -80,6 +83,37 @@ function App() {
               <MainLayout>
                 <SettingsPage />
               </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <OrdersPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedRoute>
+              <MainLayout>
+                <OrderDetailPage />
+              </MainLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/receipt/:id"
+          element={
+            <ProtectedRoute>
+              <ReceiptPage />
             </ProtectedRoute>
           }
         />

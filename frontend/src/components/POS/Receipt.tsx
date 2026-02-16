@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { X, Printer, CheckCircle } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 import { getReceipt, type ReceiptData } from '../../api/orders';
 import type { Order } from '../../types';
 
@@ -63,11 +64,13 @@ const Receipt = ({ isOpen, order, onClose }: ReceiptProps) => {
               <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
             </div>
           ) : receipt ? (
-            <div id="receipt-content" className="max-w-md mx-auto">
+            <div id="receipt-content" className="max-w-md mx-auto print:text-black">
               {/* Store Header */}
-              <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold text-gray-900">POS Store</h1>
-                <p className="text-sm text-gray-600">Thank you for your purchase!</p>
+              <div className="text-center mb-6 pb-4 border-b-2 border-gray-300">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">POS Store</h1>
+                <p className="text-sm text-gray-600">123 Main Street</p>
+                <p className="text-sm text-gray-600">Phone: (555) 123-4567</p>
+                <p className="text-sm text-gray-600 mt-2">Thank you for your purchase!</p>
               </div>
 
               {/* Order Info */}
@@ -135,10 +138,23 @@ const Receipt = ({ isOpen, order, onClose }: ReceiptProps) => {
                 </div>
               </div>
 
+              {/* QR Code */}
+              <div className="flex justify-center mb-6">
+                <div className="bg-white p-3 rounded border border-gray-300">
+                  <QRCodeSVG
+                    value={`ORDER:${receipt.order_number}`}
+                    size={128}
+                    level="M"
+                  />
+                </div>
+              </div>
+
               {/* Footer */}
-              <div className="text-center text-sm text-gray-600">
+              <div className="text-center text-sm text-gray-600 border-t-2 border-gray-300 pt-4">
+                <p className="font-semibold mb-2">Thank you for shopping with us!</p>
                 <p>Please retain this receipt for your records</p>
                 <p className="mt-2">Visit us again soon!</p>
+                <p className="mt-3 text-xs">Scan QR code to view order online</p>
               </div>
             </div>
           ) : (

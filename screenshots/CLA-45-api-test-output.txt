@@ -1,0 +1,61 @@
+============================================================
+CLA-45 Checkout & Payment Processing Test
+============================================================
+
+1. Logging in as admin...
+✓ Login successful
+
+2. Getting products...
+✓ Found 3 products
+  - Hallmark Happy Birthday Card ($5.99, Stock: 40)
+  - Blue Mountain Arts Happy Birthday Card ($6.44, Stock: 91)
+  - Studio Ink Happy Birthday Card ($7.35, Stock: 54)
+
+3. Validating cart...
+✓ Cart valid: True
+  Subtotal: $18.42
+  Tax:      $1.57
+  Total:    $19.99
+
+4. Testing CASH payment...
+✓ Cash order created: ORD-20260216-0012
+  Total: $19.99
+  Payment: cash
+
+5. Testing CREDIT payment...
+✓ Credit order created: ORD-20260216-0013
+  Total: $6.50
+  Payment: credit
+
+6. Testing SPLIT payment...
+✓ Split order created: ORD-20260216-0014
+  Total: $6.50
+  Payment: split
+  Cash:    $3.25
+  Credit:  $3.25
+
+7. Verifying inventory decrement...
+✓ Product: Hallmark Happy Birthday Card
+  Original stock: 40
+  New stock:      36
+  Sold:           4 (expected: 4)
+  ✓ Inventory decremented correctly!
+
+8. Testing receipt generation...
+✓ Receipt generated for ORD-20260216-0012
+  Date: 2026-02-16T01:17:32.277488
+  Items: 2
+  Total: $19.99
+  Payment: cash
+  Cashier: admin@example.com
+
+============================================================
+ALL TESTS COMPLETED SUCCESSFULLY!
+============================================================
+
+Summary:
+✓ Cash payment:    ORD-20260216-0012
+✓ Credit payment:  ORD-20260216-0013
+✓ Split payment:   ORD-20260216-0014
+✓ Inventory atomic decrement verified
+✓ Receipt generation verified

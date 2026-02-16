@@ -1,0 +1,279 @@
+================================================================================
+CLA-45: Checkout & Payment Processing - Manual Test Guide
+================================================================================
+
+This document provides step-by-step instructions for manually testing the
+checkout and payment processing feature through the UI.
+
+================================================================================
+PREREQUISITE
+================================================================================
+
+1. Servers running on:
+   - Frontend: http://localhost:5174
+   - Backend: http://localhost:8000
+
+2. Login credentials:
+   - Email: admin@example.com
+   - Password: admin123
+
+================================================================================
+TEST CASE 1: Cash Payment
+================================================================================
+
+Steps:
+1. Navigate to http://localhost:5174/login
+2. Login with admin credentials
+3. Click on "Point of Sale" in sidebar (or navigate to /pos)
+4. In the product search box, type "birthday"
+5. Click "Add to Cart" on the first product
+6. Click "Add to Cart" on the second product
+7. Verify cart shows 2 items with correct quantities and prices
+8. Click "Checkout" button in cart panel
+9. Verify checkout modal opens
+10. Verify "Cash" payment method is selected by default
+11. Verify order summary shows:
+    - Subtotal
+    - Tax (8.5%)
+    - Total
+12. Click "Complete Order" button
+13. Verify receipt modal appears
+14. Verify receipt shows:
+    - Order number
+    - Items purchased
+    - Payment method: cash
+    - Total amount
+15. Click "Close" to dismiss receipt
+16. Verify cart is now empty
+
+Expected Result: PASS
+- Cash order created successfully
+- Receipt displayed
+- Cart cleared after checkout
+
+================================================================================
+TEST CASE 2: Credit Payment
+================================================================================
+
+Steps:
+1. Add one product to cart
+2. Click "Checkout" button
+3. In checkout modal, click the "Credit" payment option
+4. Verify the credit card icon is highlighted
+5. Verify payment display shows "Credit card payment of $X.XX"
+6. Click "Complete Order" button
+7. Verify receipt shows payment method: credit
+8. Close receipt and verify cart is cleared
+
+Expected Result: PASS
+- Credit order created successfully
+- Payment method correctly recorded as credit
+
+================================================================================
+TEST CASE 3: Split Payment
+================================================================================
+
+Steps:
+1. Add one product to cart (total should be around $6.50)
+2. Click "Checkout" button
+3. Click the "Split" payment option
+4. Verify two input fields appear:
+   - Cash Amount
+   - Credit Amount
+5. Verify default split is 50/50 (e.g., $3.25 cash, $3.25 credit)
+6. Change cash amount to $4.00
+7. Verify credit amount auto-updates to $2.50
+8. Verify "Total Payment" displays the sum ($6.50)
+9. Click "Complete Order" button
+10. Verify order is created successfully
+11. Verify receipt displays payment method: split
+
+Expected Result: PASS
+- Split payment amounts auto-calculate
+- Order created with split payment details
+- Both cash and credit amounts stored
+
+================================================================================
+TEST CASE 4: Split Payment Validation
+================================================================================
+
+Steps:
+1. Add product to cart
+2. Click "Checkout"
+3. Select "Split" payment
+4. Enter cash amount: $5.00
+5. Enter credit amount: $1.00
+6. Click "Complete Order"
+7. Verify error message appears:
+   "Total payment ($6.00) must equal order total ($6.50)"
+
+Expected Result: PASS
+- Validation prevents mismatched split payment
+- Clear error message displayed
+
+================================================================================
+TEST CASE 5: Ctrl+Enter Keyboard Shortcut (POS Page)
+================================================================================
+
+Steps:
+1. Add items to cart
+2. Do NOT click checkout button
+3. Press Ctrl+Enter on keyboard
+4. Verify checkout modal opens automatically
+
+Expected Result: PASS
+- Ctrl+Enter opens checkout modal from POS page
+
+================================================================================
+TEST CASE 6: Ctrl+Enter Keyboard Shortcut (Checkout Modal)
+================================================================================
+
+Steps:
+1. Add items to cart
+2. Click checkout button to open modal
+3. Select payment method (Cash)
+4. Press Ctrl+Enter on keyboard
+5. Verify order is completed (same as clicking "Complete Order")
+6. Verify receipt appears
+
+Expected Result: PASS
+- Ctrl+Enter completes checkout from modal
+
+================================================================================
+TEST CASE 7: Empty Cart Prevention
+================================================================================
+
+Steps:
+1. Ensure cart is empty
+2. Verify "Checkout" button is present but disabled/grayed out
+3. Press Ctrl+Enter
+4. Verify nothing happens (no modal opens)
+
+Expected Result: PASS
+- Cannot checkout with empty cart
+- Checkout button disabled when cart is empty
+- Ctrl+Enter shortcut does not trigger on empty cart
+
+================================================================================
+TEST CASE 8: Inventory Decrement Verification
+================================================================================
+
+Steps:
+1. Navigate to Inventory page
+2. Note the "On Hand" quantity for a product (e.g., 40 units)
+3. Return to POS page
+4. Add that product to cart with quantity 2
+5. Complete checkout (any payment method)
+6. Return to Inventory page
+7. Verify the "On Hand" quantity decreased by 2 (now 38 units)
+
+Expected Result: PASS
+- Inventory decremented atomically
+- Correct quantity deducted
+
+================================================================================
+TEST CASE 9: Insufficient Stock Prevention
+================================================================================
+
+Steps:
+1. Find a product with low stock (e.g., 5 units)
+2. Add to cart
+3. Try to increase quantity to more than available (e.g., 10)
+4. Verify quantity input is limited to available stock
+5. Or verify error message when attempting checkout
+
+Expected Result: PASS
+- Cannot add more items than available stock
+- Checkout validation prevents overselling
+
+================================================================================
+TEST CASE 10: Order Summary Display
+================================================================================
+
+Steps:
+1. Add multiple products to cart
+2. As a manager/admin, apply a line-item discount
+3. Apply a cart-level discount
+4. Click checkout
+5. Verify order summary shows:
+   - Subtotal (sum of all items)
+   - Discounts (if applied, shown in green as negative)
+   - Tax (8.5% of subtotal minus discounts)
+   - Total (subtotal - discounts + tax)
+
+Expected Result: PASS
+- All amounts calculated correctly
+- Discounts displayed properly
+- Tax calculated on discounted subtotal
+
+================================================================================
+TEST CASE 11: Receipt Generation
+================================================================================
+
+Steps:
+1. Complete any checkout
+2. View receipt modal
+3. Verify receipt contains:
+   - Order number (format: ORD-YYYYMMDD-####)
+   - Date/time
+   - List of items with quantities and prices
+   - Subtotal, tax, total
+   - Payment method
+   - Cashier email
+
+Expected Result: PASS
+- Receipt contains all required information
+- Values match order details
+
+================================================================================
+TEST CASE 12: Order History Verification
+================================================================================
+
+Steps:
+1. Complete a checkout
+2. Note the order number from receipt
+3. Click "Orders" in sidebar
+4. Verify the order appears in the list
+5. Click on the order to view details
+6. Verify order details match the original purchase
+
+Expected Result: PASS
+- Orders saved to database
+- Order details accessible
+- Payment information preserved
+
+================================================================================
+UI/UX VERIFICATION
+================================================================================
+
+Visual Elements:
+- Payment method buttons have clear icons (Cash, Credit Card, Split)
+- Active payment method is highlighted with blue border and background
+- Loading state shows "Processing..." on Complete Order button
+- Error messages appear in red box with clear text
+- Receipt modal is properly styled and readable
+
+Interactions:
+- All buttons respond to clicks
+- Input fields accept numeric values
+- Tab navigation works
+- Modal can be closed with X button or Cancel button
+- Keyboard shortcuts work as expected
+
+================================================================================
+NOTES
+================================================================================
+
+Known Issues:
+- Minor product search display UI issue (noted for future work, not blocking)
+
+Browser Compatibility:
+- Tested on Chrome (headless mode for automated tests)
+- Should work on all modern browsers
+
+Performance:
+- Checkout completes in < 2 seconds
+- No UI lag or freezing
+- Smooth transitions between states
+
+================================================================================

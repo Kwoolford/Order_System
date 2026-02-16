@@ -69,3 +69,13 @@ export const getReceipt = async (orderId: number): Promise<ReceiptData> => {
   const response = await apiClient.post(`/orders/${orderId}/receipt`);
   return response.data;
 };
+
+export const getOrders = async (skip: number = 0, limit: number = 50): Promise<Order[]> => {
+  const response = await apiClient.get(`/orders?skip=${skip}&limit=${limit}`);
+  return response.data;
+};
+
+export const getOrder = async (orderId: number): Promise<Order> => {
+  const response = await apiClient.get(`/orders/${orderId}`);
+  return response.data;
+};
