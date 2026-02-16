@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from app.database import get_db
-from app.models import Product
+from app.models import Product, User
 from app.schemas import CartValidationRequest, CartValidationResponse
 from app.services.tax import calculate_tax
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/cart", tags=["cart"])
 
@@ -16,7 +17,8 @@ router = APIRouter(prefix="/cart", tags=["cart"])
 @router.post("/validate", response_model=CartValidationResponse)
 def validate_cart(
     cart_data: CartValidationRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Validate cart items before checkout

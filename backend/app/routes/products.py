@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 
 from app.database import get_db
-from app.models import Product, ProductStatus
+from app.models import Product, ProductStatus, User
 from app.schemas import ProductResponse, ProductCreate, ProductUpdate
 from app.auth import get_current_user
+from app.rbac import require_manager
 
 router = APIRouter(prefix="/products", tags=["products"])
 
@@ -114,7 +115,7 @@ def get_product(
 def create_product(
     product_data: ProductCreate,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user: User = Depends(require_manager)
 ):
     """
     Create a new product
@@ -161,7 +162,7 @@ def update_product(
     product_id: int,
     product_data: ProductUpdate,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user: User = Depends(require_manager)
 ):
     """
     Update a product
