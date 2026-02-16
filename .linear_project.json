@@ -1,73 +1,94 @@
 {
-  "project_id": "157a1630-d319-4389-85c6-4b3f5e826b5e",
-  "project_name": "Greeting Card POS",
-  "project_slug": "f81bf4dceaf1",
-  "meta_issue_id": "CLA-41",
-  "total_issues": 30,
-  "created_at": "2026-02-14T20:03:28.764Z",
+  "initialized": true,
+  "created_at": "2026-02-15T23:58:43.802Z",
   "team_key": "CLA",
-  "feature_areas": [
-    "POS Checkout",
-    "Inventory Management",
-    "Returns & Refunds",
-    "Customers",
-    "Reporting",
-    "Admin & Security",
-    "Frontend UI",
-    "Backend API",
-    "Testing & Data",
-    "Documentation"
-  ],
-  "issues": {
-    "pos_checkout": [
-      "CLA-11: POS Search & Quick Lookup",
-      "CLA-12: POS Cart Management",
-      "CLA-13: POS Discounts & Tax",
-      "CLA-14: POS Checkout & Payment",
-      "CLA-15: Receipt Generation & Printing"
-    ],
-    "inventory": [
-      "CLA-16: Inventory CRUD",
-      "CLA-17: Stock Tracking & Adjustments",
-      "CLA-18: Low-Stock Dashboard",
-      "CLA-19: Suppliers & Purchase Orders"
-    ],
-    "returns": [
-      "CLA-20: Returns & Refunds"
-    ],
-    "customers": [
-      "CLA-21: Customer Management"
-    ],
-    "reporting": [
-      "CLA-22: Reporting Dashboard"
-    ],
-    "admin_security": [
-      "CLA-23: Authentication & Authorization",
-      "CLA-24: Audit Logging & Admin Features"
-    ],
-    "backend": [
-      "CLA-25: Database Schema & Models",
-      "CLA-26: Backend API Endpoints"
-    ],
-    "frontend": [
-      "CLA-27: Frontend UI Framework & Components",
-      "CLA-28: POS Screen Implementation",
-      "CLA-29: Checkout Flow & Payment UI",
-      "CLA-30: Inventory Management UI",
-      "CLA-31: Stock Adjustment UI",
-      "CLA-32: Supplier & PO Management UI",
-      "CLA-33: Returns Management UI",
-      "CLA-34: Customer Management UI",
-      "CLA-35: Reports & Analytics Dashboard",
-      "CLA-36: User Management & Audit Log UI"
-    ],
-    "testing_data": [
-      "CLA-37: Testing Suite",
-      "CLA-38: Seed Data & Demo Dataset"
-    ],
-    "documentation": [
-      "CLA-39: Documentation & README",
-      "CLA-40: Code Quality & Linting"
-    ]
-  }
+  "team_name": "Claude-engineer-kyle",
+  "project_id": "2b725e61-2842-48a0-8d13-34c520d5f6dd",
+  "project_name": "Greeting Card Shop POS",
+  "project_slug": "5c24ef01707e",
+  "meta_issue_id": "CLA-58",
+  "total_issues": 16,
+  "session_1_started": true,
+  "created_issues": [
+    {
+      "id": "CLA-42",
+      "title": "User Authentication & Role-Based Access Control",
+      "priority": "Urgent"
+    },
+    {
+      "id": "CLA-43",
+      "title": "POS Search & Product Lookup (Fast search by SKU, name, category, barcode)",
+      "priority": "Urgent"
+    },
+    {
+      "id": "CLA-44",
+      "title": "Shopping Cart & Quantity Management",
+      "priority": "Urgent"
+    },
+    {
+      "id": "CLA-45",
+      "title": "Checkout & Payment Processing (Cash, Credit, Split payment)",
+      "priority": "Urgent"
+    },
+    {
+      "id": "CLA-46",
+      "title": "Receipt Generation & Storage",
+      "priority": "High"
+    },
+    {
+      "id": "CLA-47",
+      "title": "Product Inventory CRUD",
+      "priority": "High"
+    },
+    {
+      "id": "CLA-48",
+      "title": "Stock Adjustments & Tracking",
+      "priority": "High"
+    },
+    {
+      "id": "CLA-49",
+      "title": "Suppliers & Purchase Orders",
+      "priority": "High"
+    },
+    {
+      "id": "CLA-50",
+      "title": "Low-Stock Dashboard & PO Suggestions",
+      "priority": "High"
+    },
+    {
+      "id": "CLA-51",
+      "title": "Returns & Refunds Flow",
+      "priority": "High"
+    },
+    {
+      "id": "CLA-52",
+      "title": "Customer Management (Create/search/history)",
+      "priority": "Medium"
+    },
+    {
+      "id": "CLA-53",
+      "title": "Reports Dashboard (Sales metrics, charts)",
+      "priority": "Medium"
+    },
+    {
+      "id": "CLA-54",
+      "title": "Inventory Metrics Dashboard",
+      "priority": "Medium"
+    },
+    {
+      "id": "CLA-55",
+      "title": "Admin: User Management & Audit Log Viewer",
+      "priority": "High"
+    },
+    {
+      "id": "CLA-56",
+      "title": "E2E Smoke Test (Playwright: login → add to cart → checkout)",
+      "priority": "Medium"
+    },
+    {
+      "id": "CLA-57",
+      "title": "Seed Data & Demo Credentials",
+      "priority": "High"
+    }
+  ]
 }
